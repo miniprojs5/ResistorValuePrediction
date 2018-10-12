@@ -36,4 +36,30 @@ for f in files:
     dim=(width,height)
     resized=cv2.resize(img,dim,interpolation=cv2.INTER_AREA)
     print("resized dimensions",resized.shape)
+
+========================================================
+import pandas as pd
+import cv2
+import os
+import glob
+import numpy as np
+
+img_dir = "/home/user/resistor/test/*.jpg"  
+data_path = os.path.abspath(img_dir)
+files = glob.glob(data_path)
+print(files)
+width=250
+height=100
+for f in files:
+    img=cv2.imread(f,cv2.IMREAD_UNCHANGED)
+    dim=(width,height)
+    resized=cv2.resize(img,dim,interpolation=cv2.INTER_AREA)
+    #print("resized dimensions",resized.shape)
+    img_np=np.array(resized)
+    #print(img_np)
+    #df=pd.DataFrame(img_np)
+    cv2.imshow("Resized image", resized)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
     
