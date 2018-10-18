@@ -1,0 +1,22 @@
+import cv2,matplotlib
+import numpy as np
+import matplotlib.pyplot as plt
+img=cv2.imread('/home/user/resistor/test/blue.jpg')
+
+img_hsv = cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
+
+img1= cv2.cvtColor(img_hsv,cv2.COLOR_HSV2RGB)
+
+blue_min = np.array([170, 100, 0], np.uint8)
+blue_max = np.array([180, 255, 255], np.uint8)
+
+threshold_blue_img = cv2.inRange(img_hsv, blue_min, blue_max)
+
+output=cv2.cvtColor(threshold_blue_img,cv2.COLOR_HSV2RGB)
+
+plt.subplot(121),plt.imshow(threshold_blue_img),plt.title('Gray')
+plt.xticks([]), plt.yticks([])
+plt.show()
+
+#plt.imshow(threshold_blue_img)
+
