@@ -4,12 +4,14 @@ from matplotlib import pyplot as plt
 np.set_printoptions(threshold=np.inf)
 
 
-img= cv2.imread('/home/gayathri/resistor/ResistorValuePrediction/330_resistor.jpg')
+img= cv2.imread('/home/gayathri/resistor/ResistorValuePrediction/resis.jpg')
 
 #hsv=cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
 
 #bilateralFilter(image, dstBila, kernel_length, kernel_length*2, kernel_length/2);
+
 rgb=cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+rgb1=cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
 gray=cv2.cvtColor(rgb,cv2.COLOR_RGB2GRAY)
 
 
@@ -67,10 +69,22 @@ no_of_contours=len(contours)
 #print(contours)
 #cont=np.array(contours)
 
-draw=cv2.drawContours(rgb,contours,-1,(0,255,0),3)
+draw=cv2.drawContours(rgb,contours,-1,(0,0,255),2)
 
 #plotting contours
 plt.subplot(121),plt.imshow(draw,cmap='gray'),plt.title('drawcontours')
 plt.xticks([]), plt.yticks([])
 plt.show()
 
+#==================== cropping the image =====================
+
+height,width,_=draw.shape
+print(draw.shape)
+start_row,start_col=int(height*0.25),int(width*0.25)
+end_row,end_col=int(height*0.75),int(width*0.75)
+
+cropped=rgb1[start_row:end_row,start_col:end_col]
+
+plt.subplot(121),plt.imshow(cropped),plt.title('cropped')
+plt.xticks([]), plt.yticks([])
+plt.show()
