@@ -1,7 +1,10 @@
 import cv2 
 import numpy as np
 from matplotlib import pyplot as plt
-img= cv2.imread('/home/user/resistor/test/330_resistor.jpg')
+np.set_printoptions(threshold=np.inf)
+
+
+img= cv2.imread('/home/gayathri/resistor/ResistorValuePrediction/330_resistor.jpg')
 
 #hsv=cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
 
@@ -11,14 +14,20 @@ gray=cv2.cvtColor(rgb,cv2.COLOR_RGB2GRAY)
 
 
 #edges = cv2.Canny(blur,100,200)
+
+#find threshold values 
 high_thres,thres_img=cv2.threshold(gray,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 low_thres=0.5*high_thres
 
+#Smoothening and noise reduction using Bilateral filter
 blur = cv2.bilateralFilter(rgb,5,high_thres,low_thres)
 blur1 = cv2.bilateralFilter(rgb,3,high_thres,low_thres)
-blur2 = cv2.bilateralFilter(rgb,2,high_thres,low_thres)
+blur2 = cv2.bilateralFilter(gray,2,high_thres,low_thres)
 
+#Trying smoothening with Gaussian filetr
 gaussian_blur=cv2.GaussianBlur(gray,(5,5),0)
+
+#Edge Detection : Canny Edge detection Method
 edges1 = cv2.Canny(blur,100,200)
 edges = cv2.Canny(gaussian_blur,100,200)
 edges2 = cv2.Canny(blur1,100,200)
@@ -30,7 +39,8 @@ plt.xticks([]), plt.yticks([])
 plt.subplot(122),plt.imshow(blur),plt.title('blurred')
 plt.xticks([]), plt.yticks([])
 plt.show()
-#=====================
+#=====================Plotting the edges=====================================
+
 plt.subplot(121),plt.imshow(edges,cmap='gray'),plt.title(' Gauss edges')
 plt.xticks([]), plt.yticks([])
 plt.show()
@@ -50,3 +60,17 @@ plt.subplot(121),plt.imshow(edges3,cmap='gray'),plt.title(' Bi  2')
 plt.xticks([]), plt.yticks([])
 
 plt.show()
+
+#finding contours 
+_,contours,_=cv2.findContours(edges3,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+no_of_contours=len(contours)
+#print(contours)
+#cont=np.array(contours)
+
+draw=cv2.drawContours(rgb,contours,-1,(0,255,0),3)
+
+#plotting contours
+plt.subplot(121),plt.imshow(draw,cmap='gray'),plt.title('drawcontours')
+plt.xticks([]), plt.yticks([])
+plt.show()
+
