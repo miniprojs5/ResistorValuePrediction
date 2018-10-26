@@ -1,10 +1,10 @@
 import cv2 
 import numpy as np
 from matplotlib import pyplot as plt
-np.set_printoptions(threshold=np.inf)
+#np.set_printoptions(threshold=np.inf)
 
 
-img= cv2.imread('/home/gayathri/resistor/ResistorValuePrediction/resis.jpg')
+img= cv2.imread('/home/user/resistor/ResistorValuePrediction/330_resistor.jpg')
 
 #hsv=cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
 
@@ -85,6 +85,50 @@ end_row,end_col=int(height*0.75),int(width*0.75)
 
 cropped=rgb1[start_row:end_row,start_col:end_col]
 
-plt.subplot(121),plt.imshow(cropped),plt.title('cropped')
+cropped1=rgb1[start_row:end_row,start_col:end_col]
+
+plt.subplot(121),plt.imshow(cropped1),plt.title('cropped')
 plt.xticks([]), plt.yticks([])
 plt.show()
+
+#===================Band Extraction========================
+
+cropped_gray=cv2.cvtColor(cropped,cv2.COLOR_RGB2GRAY)
+
+#find threshold values 
+high_thres,thres_img=cv2.threshold(cropped_gray,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+low_thres=0.5*high_thres
+
+cropped_blur = cv2.bilateralFilter(cropped_gray,3                                                                                                                                                                                         ,high_thres,low_thres)
+cropped_edges = cv2.Canny(cropped_blur,100,200)
+
+#plotting cropped edges
+
+plt.subplot(122),plt.imshow(cropped_edges,cmap='gray'),plt.title('cropped')
+plt.xticks([]), plt.yticks([])
+plt.show()
+
+#finding contours in cropped images
+
+_,contours,_=cv2.findContours(cropped_edges,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+no_of_contours=len(contours)
+print(contours)
+print(no_of_contours)
+#Seeing contours 
+area_list=[]
+for cnt in contours:
+   # rect=cv2.minAreaRect(cnt)
+    #box=cv2.boxPoints(rect)
+    #box=np.int0(box)
+    
+    draw1=cv2.drawContours(cropped1,[cnt],0,(0,0,255),2)
+    #draw1=cv2.cvtColor(draw,cv2.COLOR_RGB2BGR)
+    area_list.append(cv2.contourArea(cnt))
+    area=cv2.contourArea(cnt)
+    print("Area of contour number  ",area)
+    cv2.imshow('image',cropped1)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    
+#====================printing contour with larger area ==========
+print(sorted(area_list))
