@@ -1,48 +1,46 @@
-#finding dominant color in an image
-
-
 import cv2
-from matplotlib import pyplot as plt
-import numpy as np
+from sklearn.cluster import KMeans
 
+class DominantColors:
 
-image= cv2.imread('/home/gayathri/resistor/ResistorValuePrediction/330_resistor.jpg')
+    CLUSTERS = None
+    IMAGE = None
+    COLORS = None
+    LABELS = None
+    
+    def __init__(self, image, clusters=3):
+        self.CLUSTERS = clusters
+        self.IMAGE = image
+        
+    def dominantColors(self):
+    
+        #read image
+        img = cv2.imread(self.IMAGE)
+        
+        #convert to rgb from bgr
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                
+        #reshaping to a list of pixels
+        img = img.reshape((img.shape[0] * img.shape[1], 3))
+        
+        #save image after operations
+        self.IMAGE = img
+        
+        #using k-means to cluster pixels
+        kmeans = KMeans(n_clusters = self.CLUSTERS)
+        kmeans.fit(img)
+        
+        #the cluster centers are our dominant colors.
+        self.COLORS = kmeans.cluster_centers_
+        
+        #save labels
+        self.LABELS = kmeans.labels_
+        
+        #returning after converting to integer from float
+        return self.COLORS.astype(int)
 
-# reshape the image to be a list of pixels
-#image = image.reshape((image.shape[0] * image.shape[1], 3))
-
-#covert to rgb
-rgb=cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
-
-z=rgb.reshape((-1,3))
-z=np.float32(z)
-criteria=(cv2.TERM_CRITERIA_EPS+cv2.TERM_CRITERIA_MAX_ITER,10,1.0)
-
-k=6
-ret,lablel1,center1=cv2.kmeans(z,k,None,criteria,10,cv2.KMEANS_RANDOM_CENTERS)
-center1=np.uint8(center1)
-res1=center1[label1.flatten()]
-output1=res1.reshape((img.shape))
-
-k=5
-ret,lablel1,center1=cv2.kmeans(z,k,None,criteria,10,cv2.KMEANS_RANDOM_CENTERS)
-center1=np.uint8(center1)
-res1=center1[label1.flatten()]
-output2=res1.reshape((img.shape))
-
-k=4
-ret,lablel1,center1=cv2.kmeans(z,k,None,criteria,10,cv2.KMEANS_RANDOM_CENTERS)
-center1=np.uint8(center1)
-res1=center1[label1.flatten()]
-output3=res1.reshape((img.shape))
-
-output=[image,output1,output2,output3]
-titles=['original','k=6','k=5','k=4']
-for i in range(4):
-    plt.subplot(2,2,i+1)
-    plt.imshow(output[i])
-    plt.title(titles[i])
-    plt.xticks([]), plt.yticks([])
-    plt.show()
-	
-
+img = '/home/user/resistor/ResistorValuePrediction/330_resistor.jpg'
+clusters = 5
+dc = DominantColors(img, clusters) 
+colors = dc.dominantColors()
+print(colors)
