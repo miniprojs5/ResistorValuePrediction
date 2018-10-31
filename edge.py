@@ -1,10 +1,11 @@
 import cv2 
 import numpy as np
 from matplotlib import pyplot as plt
+from sklearn.cluster import KMeans
 #np.set_printoptions(threshold=np.inf)
 
 
-img= cv2.imread('/home/user/resistor/ResistorValuePrediction/330_resistor.jpg')
+img= cv2.imread('/home/user/resistor/ResistorValuePrediction/resis5.jpg')
 
 #hsv=cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
 
@@ -80,12 +81,13 @@ plt.show()
 
 height,width,_=draw.shape
 print(draw.shape)
-start_row,start_col=int(height*0.25),int(width*0.25)
-end_row,end_col=int(height*0.75),int(width*0.75)
+start_row,start_col=int(height*0.2),int(width*0.25)
+end_row,end_col=int(height*0.5),int(width*0.75)
 
 cropped=rgb1[start_row:end_row,start_col:end_col]
 
 cropped1=rgb1[start_row:end_row,start_col:end_col]
+plt.imsave('cropped.jpg',cropped)
 
 plt.subplot(121),plt.imshow(cropped1),plt.title('cropped')
 plt.xticks([]), plt.yticks([])
@@ -112,23 +114,79 @@ plt.show()
 
 _,contours,_=cv2.findContours(cropped_edges,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 no_of_contours=len(contours)
-print(contours)
+#print(contours)
 print(no_of_contours)
+
 #Seeing contours 
-area_list=[]
-for cnt in contours:
+#area_list=[]
+#for cnt in contours:
    # rect=cv2.minAreaRect(cnt)
     #box=cv2.boxPoints(rect)
     #box=np.int0(box)
     
-    draw1=cv2.drawContours(cropped1,[cnt],0,(0,0,255),2)
+ #   draw1=cv2.drawContours(cropped1,[cnt],0,(0,0,255),2)
     #draw1=cv2.cvtColor(draw,cv2.COLOR_RGB2BGR)
-    area_list.append(cv2.contourArea(cnt))
-    area=cv2.contourArea(cnt)
-    print("Area of contour number  ",area)
-    cv2.imshow('image',cropped1)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+  #  area_list.append(cv2.contourArea(cnt))
+   # area=cv2.contourArea(cnt)
+   # print("Area of contour number  ",area)
+    #cv2.imshow('image',cropped1)
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
     
 #====================printing contour with larger area ==========
-print(sorted(area_list))
+#print(sorted(area_list))
+
+
+
+#finding dominant colors
+
+
+
+class DominantColors:
+
+    CLUSTERS = None
+    IMAGE = None
+    COLORS = None
+    LABELS = None
+    
+    def __init__(self, image, clusters=3):
+        self.CLUSTERS = clusters
+        self.IMAGE = image
+        
+    def dominantColors(self):
+    
+        #read image
+        img = cv2.imread(self.IMAGE)
+        
+        #convert to rgb from bgr
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                
+        #reshaping to a list of pixels
+        img = img.reshape((img.shape[0] * img.shape[1], 3))
+        
+        #save image after operations
+        self.IMAGE = img
+        
+        #using k-means to cluster pixels
+        kmeans = KMeans(n_clusters = self.CLUSTERS)
+        kmeans.fit(img)
+        
+        #the cluster centers are our dominant colors.
+        self.COLORS = kmeans.cluster_centers_
+        
+        #save labels
+        self.LABELS = kmeans.labels_
+        
+        #returning after converting to integer from float
+        return self.COLORS.astype(int)
+
+    
+img = '/home/user/resistor/ResistorValuePrediction/cropped.jpg'
+#img_cv=cv2.imread(cropped)
+clusters = 6
+dc = DominantColors(img,clusters) 
+colors = dc.dominantColors()
+print(colors)
+
+#scanning parts of images using window frames
+
