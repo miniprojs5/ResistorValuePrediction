@@ -4,10 +4,10 @@ from matplotlib import pyplot as plt
 import os
 import glob
 
-img_dir = "/home/user/resistor/ResistorValuePrediction/images/horizontal/*.jpg"
+img_dir = "/home/user/resistor/ResistorValuePrediction/images/unprocessed/*.jpg"
 data_path = os.path.abspath(img_dir)
 files = glob.glob(data_path)
-cnt=305
+cnt=360
 for f in files:
     cnt += 1
    
