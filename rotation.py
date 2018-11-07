@@ -23,6 +23,7 @@ for f in files:
     #plt.xticks([]), plt.yticks([])
     #plt.show()
     img_rotation=cv2.cvtColor(img_rotation,cv2.COLOR_RGB2BGR)
+
 #plt.savefig('/home/user/resistor/ResistorValuePrediction/Resistor images/processed/20181031_151241.jpg',img_rotation)
     cv2.imwrite('/home/user/resistor/ResistorValuePrediction/images/processed/res-'+ str(cnt) + '.jpg',img_rotation)
-    #'pic'+str(num)+'.jpg', img
+ 
