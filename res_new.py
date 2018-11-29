@@ -20,7 +20,7 @@ from matplotlib import pyplot as plt
 np.set_printoptions(threshold=np.inf)
 
 #loading test image
-img= cv2.imread('/home/gayathri/resistor/ResistorValuePrediction/enhance1.jpg')
+img= cv2.imread('/home/gayathri/resistor/ResistorValuePrediction/image set/r2.jpg')
 img = cv2.resize(img,(360,480))
 
 
@@ -96,6 +96,7 @@ def resistance(c1):
     powx=pow(10, int(cn3))
     return sumx*powx
 
+#finding the row that has value greater than 0
 
 def find_all(ls):
     flg=1
